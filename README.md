@@ -1,1 +1,4 @@
-# relational_db_final_project
+rdb-fullstack
+=============
+
+Common code for the Relational Databases and Full Stack Fundamentals courses, edited for my final project.
