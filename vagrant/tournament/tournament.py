@@ -13,21 +13,29 @@ def connect():
 
 def deleteMatches():
     #Remove all the match records from the database.
-    connect()
-    
-    DELETE FROM Matches
+    DB = connect();
+
+    cursor = DB.cursor();
+
+    cursor.execute('DELETE FROM Matches;')
+    cursor.commit();
 
 def deletePlayers():
     #Remove all the player records from the database.
-    
-    DELETE FROM Players
+    DB = connect();
+
+    cursor = DB.cursor();
+
+    cursor.execute('DELETE FROM Players;')
+    cursor.commit();
 
 def countPlayers():
     #Returns the number of players currently registered.
+    DB = connect();
 
-    COUNT DISTINCT FROM Players
+    cursor = DB.cursor();
 
-
+    cursor.execute('SELECT COUNT(*) DISTINCT FROM Players;')
 
 def registerPlayer(name):
     #Adds a player to the tournament database.
@@ -37,8 +45,12 @@ def registerPlayer(name):
   
     #Args:
     #  name: the player's full name (need not be unique).
-    
-    INSERT INTO Players values (name);
+    DB = connect();
+
+    cursor = DB.cursor();
+
+    cursor.execute('INSERT INTO Players values (name);');
+    cursor.commit();
 
 def playerStandings():
     #Returns a list of the players and their win records, sorted by wins.
@@ -52,8 +64,14 @@ def playerStandings():
     #    name: the player's full name (as registered)
     #    wins: the number of matches the player has won
     #    matches: the number of matches the player has played
+    DB = connect();
+    playersarray = [];
+
+    cursor = DB.cursor();
     
-    SELECT * FROM Players ORDER BY WINS ASC
+    playersarray = cursor.execute('SELECT *, (WINS + LOSSES) AS MATCHES FROM Players ORDER BY WINS ASC;');
+
+    return playersarray;
 
 def reportMatch(winner, loser):
     #Records the outcome of a single match between two players.
@@ -61,9 +79,17 @@ def reportMatch(winner, loser):
     #Args:
     #  winner:  the id number of the player who won
     #  loser:  the id number of the player who lost
+    DB = connect();
 
-    INSERT INTO Matches value (winner, loser)
- 
+    cursor = DB.cursor();
+
+    cursor.execute('INSERT INTO Matches value (winner, loser);')
+    cursor.commit();
+
+    cursor.execute("SELECT PID, WINS, LOSSES FROM Players WHERE PID = " + 'winner' + " OR " + 'loser' + ";")
+
+    #TODO where the winner PID, +1 to wins, where loser PID, +1 to losses; UPDATE the 
+    #numbers in the database.
  
 def swissPairings():
     #Returns a list of pairs of players for the next round of a match.
