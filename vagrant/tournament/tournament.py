@@ -80,16 +80,34 @@ def reportMatch(winner, loser):
     #  winner:  the id number of the player who won
     #  loser:  the id number of the player who lost
     DB = connect();
+    rows = [];
 
     cursor = DB.cursor();
 
-    cursor.execute('INSERT INTO Matches value (winner, loser);')
+    cursor.execute('INSERT INTO Matches values (' + winner + ',' + loser ');')
     cursor.commit();
 
-    cursor.execute("SELECT PID, WINS, LOSSES FROM Players WHERE PID = " + 'winner' + " OR " + 'loser' + ";")
+    for row in cursor.execute('SELECT PID, WINS, LOSSES FROM Players WHERE PID = ' + winner + ' OR ' + loser + ';'):
+        rows.append(row)
 
-    #TODO where the winner PID, +1 to wins, where loser PID, +1 to losses; UPDATE the 
-    #numbers in the database.
+    #check returned PIDs against winner and loser IDs
+    if rows[0][0] == winner && rows[1][0] == loser:
+        wins = rows[0][1] + 1
+        cursor.execute('UPDATE Players WHERE PID = ' + winner + 'SET WINS = ' + wins + ';')
+        cursor.commit();
+
+        losses = rows[1][2] + 1
+        cursor.execute('UPDATE Players WHERE PID = ' + loser + 'SET LOSSES = ' + losses + ';')
+        cursor.commit();
+    else:
+        wins = rows[1][1] + 1
+        cursor.execute('UPDATE Players WHERE PID = ' + winner + 'SET WINS = ' + wins + ';')
+        cursor.commit();
+
+        losses = rows[0][2] + 1
+        cursor.execute('UPDATE Players WHERE PID = ' + loser + 'SET LOSSES = ' + losses + ';')
+        cursor.commit();
+    
  
 def swissPairings():
     #Returns a list of pairs of players for the next round of a match.
