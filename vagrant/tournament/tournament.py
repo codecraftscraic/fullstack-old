@@ -87,8 +87,8 @@ def reportMatch(winner, loser):
     cursor.execute('INSERT INTO Matches values (' + winner + ',' + loser ');')
     cursor.commit();
 
-    for row in cursor.execute('SELECT PID, WINS, LOSSES FROM Players WHERE PID = ' + winner + ' OR ' + loser + ';'):
-        rows.append(row)
+    cursor.execute('SELECT PID, WINS, LOSSES FROM Players WHERE PID = ' + winner + ' OR ' + loser + ';')
+    rows = cursor.fetchall();
 
     #check returned PIDs against winner and loser IDs
     if rows[0][0] == winner && rows[1][0] == loser:
@@ -107,7 +107,6 @@ def reportMatch(winner, loser):
         losses = rows[0][2] + 1
         cursor.execute('UPDATE Players WHERE PID = ' + loser + 'SET LOSSES = ' + losses + ';')
         cursor.commit();
-    
  
 def swissPairings():
     #Returns a list of pairs of players for the next round of a match.
@@ -123,11 +122,17 @@ def swissPairings():
     #    name1: the first player's name
     #    id2: the second player's unique id
     #    name2: the second player's name
+    DB = DB.connect();
+    cursor = DB.cursor();
 
-    SELECT * FROM Players ORDER BY WINS ASC
+    cursor.execute('SELECT PID,NAME,WINS FROM Players ORDER BY WINS DESC');
 
-    for each player in Players, i=0, i++
-        if player[i] WINS == player[j] WINS && player[i] hasn't played player[j] before
+    #take groups of same number of wins, randomize pairings. Check if they've played each other before
+    #if any match has taken place before, re-randomize. If an odd number out, they get a bye, unless
+    #the player had a bye the round before, then re-randomize.
+
+    for row in cursor:
+        if player[row] WINS == player[j] WINS && player[i] hasn't played player[j] before
             add to roundarray
 
     return roundarray
