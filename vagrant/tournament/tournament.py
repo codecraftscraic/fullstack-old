@@ -10,7 +10,6 @@ def connect():
     #Connect to the PostgreSQL database.  Returns a database connection.
     return psycopg2.connect("dbname=tournament")
 
-
 def deleteMatches():
     #Remove all the match records from the database.
     DB = connect();
@@ -124,22 +123,46 @@ def swissPairings():
     #    name2: the second player's name
     DB = DB.connect();
     cursor = DB.cursor();
+    playersarray = [];
+    matchesarray = [];
+    roundarray = [];
 
+    #get player info from players, and store in an array
     cursor.execute('SELECT PID,NAME,WINS FROM Players ORDER BY WINS DESC');
 
-    #take groups of same number of wins, randomize pairings. Check if they've played each other before
-    #if any match has taken place before, re-randomize. If an odd number out, they get a bye, unless
-    #the player had a bye the round before, then re-randomize.
-
     for row in cursor:
-        if player[row] WINS == player[j] WINS && player[i] hasn't played player[j] before
-            add to roundarray
+        #make array of results
+    return playersarray
 
-    return roundarray
+    #get previous matches, and store in array
+    cursor.execute('SELECT * FROM Matches');
+        
+    for row in cursor:
+        #make array of results
+    return matchesarray
+
+    #randomize players and return matches (for help: http://stackoverflow.com/questions/7225906/forming-random-pairs-from-a-list-sort-of)
+    def player_matches (playersarray, matchesarray):
+        matches = list(matchesarray);
+
+        #where the players' wins are the same, put in separate arrays
+        #go through the arrays of players one at a time, randomize, check, re-randomize if needed, else push to roundarray
 
 
+        valid_match = false
 
+        while not valid_match:
+            random.shuffle(players)
+    
+    #function
+    #check new matches to matches table
+    #if matches have been played, return false
+    #/function
 
+    #if false, re-randomize
+    #repeat until matches are set
+    
+    #once matches are set, send PID1, Name1, PID2, Name2 to array, and commit to matches and player tables
+    #return array
 
-
-
+    return roundarray;
