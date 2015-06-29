@@ -10,37 +10,32 @@ def connect():
     #Connect to the PostgreSQL database.  Returns a database connection.
     return psycopg2.connect("dbname=tournament")
 
+
 def deleteMatches():
     #Remove all the match records from the database.
-    DB = connect()
+    DB = connect();
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
 
     cursor.execute('DELETE FROM Matches;')
-    cursor.commit()
-
-    cursor.close()
+    cursor.commit();
 
 def deletePlayers():
     #Remove all the player records from the database.
-    DB = connect()
+    DB = connect();
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
 
     cursor.execute('DELETE FROM Players;')
-    cursor.commit()
-
-    cursor.close()
+    cursor.commit();
 
 def countPlayers():
     #Returns the number of players currently registered.
-    DB = connect()
+    DB = connect();
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
 
     cursor.execute('SELECT COUNT(*) DISTINCT FROM Players;')
-
-    cursor.close()
 
 def registerPlayer(name):
     #Adds a player to the tournament database.
@@ -50,14 +45,12 @@ def registerPlayer(name):
   
     #Args:
     #  name: the player's full name (need not be unique).
-    DB = connect()
+    DB = connect();
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
 
-    cursor.execute('INSERT INTO Players values (name);')
-    cursor.commit()
-
-    cursor.close()
+    cursor.execute('INSERT INTO Players values (name);');
+    cursor.commit();
 
 def playerStandings():
     #Returns a list of the players and their win records, sorted by wins.
@@ -71,16 +64,14 @@ def playerStandings():
     #    name: the player's full name (as registered)
     #    wins: the number of matches the player has won
     #    matches: the number of matches the player has played
-    DB = connect()
-    playersarray = []
+    DB = connect();
+    playersarray = [];
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
     
-    playersarray = cursor.execute('SELECT *, (WINS + LOSSES) AS MATCHES FROM Players ORDER BY WINS ASC;')
+    playersarray = cursor.execute('SELECT *, (WINS + LOSSES) AS MATCHES FROM Players ORDER BY WINS ASC;');
 
-    cursor.close()
-
-    return playersarray
+    return playersarray;
 
 def reportMatch(winner, loser):
     #Records the outcome of a single match between two players.
@@ -88,36 +79,35 @@ def reportMatch(winner, loser):
     #Args:
     #  winner:  the id number of the player who won
     #  loser:  the id number of the player who lost
-    DB = connect()
-    rows = []
+    DB = connect();
+    rows = [];
 
-    cursor = DB.cursor()
+    cursor = DB.cursor();
 
     cursor.execute('INSERT INTO Matches values (' + winner + ',' + loser ');')
-    cursor.commit()
+    cursor.commit();
 
-    cursor.execute('SELECT PID, WINS, LOSSES FROM Players WHERE PID = ' + winner + ' OR ' + loser + ';')
-    rows = cursor.fetchall()
+    for row in cursor.execute('SELECT PID, WINS, LOSSES FROM Players WHERE PID = ' + winner + ' OR ' + loser + ';'):
+        rows.append(row)
 
     #check returned PIDs against winner and loser IDs
     if rows[0][0] == winner && rows[1][0] == loser:
         wins = rows[0][1] + 1
         cursor.execute('UPDATE Players WHERE PID = ' + winner + 'SET WINS = ' + wins + ';')
-        cursor.commit()
+        cursor.commit();
 
         losses = rows[1][2] + 1
         cursor.execute('UPDATE Players WHERE PID = ' + loser + 'SET LOSSES = ' + losses + ';')
-        cursor.commit()
+        cursor.commit();
     else:
         wins = rows[1][1] + 1
         cursor.execute('UPDATE Players WHERE PID = ' + winner + 'SET WINS = ' + wins + ';')
-        cursor.commit()
+        cursor.commit();
 
         losses = rows[0][2] + 1
         cursor.execute('UPDATE Players WHERE PID = ' + loser + 'SET LOSSES = ' + losses + ';')
-        cursor.commit()
-
-    cursor.close()
+        cursor.commit();
+    
  
 def swissPairings():
     #Returns a list of pairs of players for the next round of a match.
@@ -133,46 +123,18 @@ def swissPairings():
     #    name1: the first player's name
     #    id2: the second player's unique id
     #    name2: the second player's name
-    DB = DB.connect()
-    cursor = DB.cursor()
-    playersarray = []
-    matchesarray = []
-    roundarray = []
 
-    #get player info from players, and store in an array
-    cursor.execute('SELECT PID,NAME,WINS FROM Players ORDER BY WINS DESC')
-    playersarray = cursor.fetchall()
+    SELECT * FROM Players ORDER BY WINS ASC
 
-    count = 0
-    while 
+    for each player in Players, i=0, i++
+        if player[i] WINS == player[j] WINS && player[i] hasn't played player[j] before
+            add to roundarray
+
+    return roundarray
 
 
-    #get previous matches, and store in array
-    cursor.execute('SELECT * FROM Matches');
-    matchesarray = cursor.fetchall();
-
-    #randomize players and return matches (for help: http://stackoverflow.com/questions/7225906/forming-random-pairs-from-a-list-sort-of)
-    def player_matches (playersarray, matchesarray):
-        matches = list(matchesarray);
-
-        #where the players' wins are the same, put in separate arrays
-        #go through the arrays of players one at a time, randomize, check, re-randomize if needed, else push to roundarray
 
 
-        valid_match = false
 
-        while not valid_match:
-            random.shuffle(players)
-    
-    #function
-    #check new matches to matches table
-    #if matches have been played, return false
-    #/function
 
-    #if false, re-randomize
-    #repeat until matches are set
-    
-    #once matches are set, send PID1, Name1, PID2, Name2 to array, and commit to matches and player tables
-    #return array
 
-    return roundarray;
